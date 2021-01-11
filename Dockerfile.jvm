@@ -1,0 +1,12 @@
+FROM gradle:jdk11 as builder
+WORKDIR /app-builder
+COPY src ./src
+COPY build.gradle .
+COPY gradle.properties .
+COPY settings.gradle .
+RUN gradle quarkusBuild --uber-jar
+
+FROM oracle/graalvm-ce:20.3.0-java11
+COPY --from=builder /app-builder/build/*-runner.jar /simple-book/simple-book-demo.jar
+EXPOSE 8989
+ENTRYPOINT ["java", "-server", "-Xms256m", "-Xmx1G", "-XX:+UseG1GC","-XX:MaxGCPauseMillis=200","-XX:InitiatingHeapOccupancyPercent=45", "-jar", "/simple-book/simple-book-demo.jar", "-Dquarkus.http.host=0.0.0.0"]

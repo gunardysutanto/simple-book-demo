@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'io.quarkus' version '1.10.5.Final'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+def quarkusGroup = project.findProperty("quarkus.group")
+def quarkusBomArtifact = project.findProperty("quarkus.bom-artifact-id")
+def quarkusVersion = project.findProperty("quarkus.version")
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(enforcedPlatform("${quarkusGroup}:${quarkusBomArtifact}:${quarkusVersion}"))
+    implementation("${quarkusGroup}:quarkus-resteasy")
+    implementation("${quarkusGroup}:quarkus-resteasy-jackson")
+    implementation("${quarkusGroup}:quarkus-hibernate-orm")
+    implementation("${quarkusGroup}:quarkus-hibernate-validator")
+    implementation("${quarkusGroup}:quarkus-agroal")
+    implementation("${quarkusGroup}:quarkus-jdbc-h2")
+    annotationProcessor("org.projectlombok:lombok:1.18.16")
+    compileOnly("org.projectlombok:lombok:1.18.16")
+    implementation("io.rest-assured:rest-assured")
+    testImplementation("${quarkusGroup}:quarkus-junit5")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+wrapper {
+   gradleVersion = '6.8'
+}
